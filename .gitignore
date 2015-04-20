@@ -8,4 +8,4 @@ dist
 .coverage
 *.html
 env
-ueditor.egg-info
+django_ueditor_plugin.egg-info
