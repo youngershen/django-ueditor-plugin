@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+.DS_Store
+.idea
+coverage
+build
+dist
+.coverage
+*.html
+env
+ueditor.egg-info
