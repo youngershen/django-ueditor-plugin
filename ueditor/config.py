@@ -2,6 +2,8 @@
 # PROJECT_NAME : django-ueditor-plugin
 # FILE_NAME    : 
 # AUTHOR       : younger shen
+from django.conf import settings
+MEDIA_URL = settings.MEDIA_URL
 
 CONFIG = {
     # 上传图片配置项
@@ -13,31 +15,31 @@ CONFIG = {
     'imageCompressBorder': 1600,
     'imageInsertAlign': 'none',
     'imageUrlPrefix': '',
-    'imagePathFormat': '/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'imagePathFormat': MEDIA_URL + 'ueditor/image/{YYYY}{MM}{DD}/',
     # 涂鸦图片上传配置项
     'scrawlActionName': 'uploadscrawl',
     'scrawlFieldName': 'upfile',
-    'scrawlPathFormat': '/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'scrawlPathFormat': MEDIA_URL + 'ueditor/scrawl/{YYYY}{MM}{DD}/{UUID}',
     'scrawlMaxSize': '2048000',
     'scrawlUrlPrefix': '',
     'scrawlInsertAlign': 'none',
     # 截图工具上传
     'snapscreenActionName': 'uploadimage',
-    'snapscreenPathFormat': '/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'snapscreenPathFormat': MEDIA_URL + 'ueditor/snap/{YYYY}{MM}{DD}/{UUID}',
     'snapscreenUrlPrefix': '',
     'snapscreenInsertAlign': 'none',
     # 抓取远程图片配置
     'catcherLocalDomain': ['127.0.0.1', 'localhost', 'img.baidu.com'],
     'catcherActionName': 'catchimage',
     'catcherFieldName': 'source',
-    'catcherPathFormat': '/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'catcherPathFormat': MEDIA_URL + 'ueditor/cacher/{YYYY}{MM}{DD}/{UUID}',
     'catcherUrlPrefix': '',
     'catcherMaxSize': 2048000,
     'catcherAllowFiles':  ['.png', '.jpg', '.jpeg', '.gif', '.bmp'],
     # 上传视频配置
     'videoActionName': 'uploadvideo',
     'videoFieldName': 'upfile',
-    'videoPathFormat': '/ueditor/php/upload/video/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'videoPathFormat': MEDIA_URL + 'ueditor/video/{YYYY}{MM}{DD}/{UUID}',
     'videoUrlPrefix': '',
     'videoMaxSize': 102400000,
     'videoAllowFiles': [
@@ -46,7 +48,7 @@ CONFIG = {
     # 上传文件配置
     'fileActionName': 'uploadfile',
     'fileFieldName': 'upfile',
-    'filePathFormat': '/ueditor/php/upload/file/{yyyy}{mm}{dd}/{time}{rand:6}',
+    'filePathFormat': MEDIA_URL + 'ueditor/file/{YYYY}{MM}{DD}/{UUID}',
     'fileUrlPrefix': '',
     'fileMaxSize': 51200000,
     'fileAllowFiles': [
@@ -58,7 +60,7 @@ CONFIG = {
     ],
     # 列出指定目录下的图片
     'imageManagerActionName': 'listimage',
-    'imageManagerListPath': '/ueditor/php/upload/image/',
+    'imageManagerListPath': MEDIA_URL,
     'imageManagerListSize': 20,
     'imageManagerUrlPrefix': '',
     'imageManagerInsertAlign': 'none',

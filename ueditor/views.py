@@ -1,8 +1,14 @@
+# -*- coding:utf-8 -*-
+# PROJECT_NAME : django-ueditor-plugin
+# FILE_NAME    :
+# AUTHOR       : younger shen
 import json
 from django.views.generic import View
 from django.http import HttpResponse, Http404
 from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_exempt
 from .utils import get_config
+from .utils import upload_file
 # Create your views here.
 
 
@@ -34,7 +40,23 @@ class JsonView(View, JsonResponseMixin):
 
 class ControllerView(JsonView):
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwarg):
+        callback = request.GET.get('callback', None)
+        action = request.GET.get('action', None)
+        config = get_config()
+
+        if 'config' == action:
+            return HttpResponse(json.dumps(config))
+
+        if callback:
+            return HttpResponse(callback + '(' + json.dumps(config) + ')')
+        else:
+            return HttpResponse(json.dumps(dict(state=u"callback参数不合法")))
+
+    def get_context_data(self):
+        return self.config_action()
+
+    def post(self, request, *args, **kwargs):
         action_data = self.get_action(request, *args, **kwargs)
         if action_data:
             return self.render_to_response(action_data)
@@ -48,11 +70,11 @@ class ControllerView(JsonView):
             return action_method(request)
         return None
 
-    def config_action(self, request):
+    def config_action(self):
         return get_config()
 
     def uploadimage_action(self, request):
-        config = self.config_action(request)
+        config = self.config_action()
 
         uploadimage_config = {'pathFormat': config.get('imagePathFormat', ''),
                               'maxSize': config.get('imageMaxSize', ''),
@@ -60,10 +82,10 @@ class ControllerView(JsonView):
                               'fieldName': config.get('imageFieldName', '')
                               }
 
-        return uploadimage_config
+        return upload_file(request, uploadimage_config)
 
     def uploadscrawl_action(self, request):
-        config = self.config_action(request)
+        config = self.config_action()
 
         uploadscrawl_config = {'pathFormat': config.get('scrawlPathFormat', ''),
                                'maxSize': config.get('scrawlMaxSize', ''),
@@ -73,10 +95,10 @@ class ControllerView(JsonView):
                                'base64': 'base64'
                                }
 
-        return uploadscrawl_config
+        return upload_file(request, uploadscrawl_config)
 
     def uploadvideo_action(self, request):
-        config = self.config_action(request)
+        config = self.config_action()
 
         uploadvideo_config = {'pathFormat': config.get('videoPathFormat', ''),
                               'maxSize': config.get('videoMaxSize', ''),
@@ -84,10 +106,10 @@ class ControllerView(JsonView):
                               'fieldName': config.get('videoFieldName', ''),
                               }
 
-        return uploadvideo_config
+        return upload_file(request, uploadvideo_config)
 
     def uploadfile_action(self, request):
-        config = self.config_action(request)
+        config = self.config_action()
 
         uploadfile_config = {'pathFormat': config.get('filePathFormat', ''),
                              'maxSize': config.get('fileMaxSize', ''),
@@ -95,6 +117,6 @@ class ControllerView(JsonView):
                              'fieldName': config.get('fileFieldName', '')
                              }
 
-        return uploadfile_config
+        return upload_file(request, uploadfile_config)
 
-controller_view = ControllerView.as_view()
+controller_view = csrf_exempt(ControllerView.as_view())
