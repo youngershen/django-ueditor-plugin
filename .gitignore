@@ -9,3 +9,4 @@ dist
 *.html
 env
 django_ueditor_plugin.egg-info
+*.rdb

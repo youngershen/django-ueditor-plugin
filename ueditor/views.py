@@ -41,42 +41,60 @@ class ControllerView(JsonView):
         else:
             raise Http404
 
-    def get_action(self, request, *args, **kwargs):
-        action = request.GET.get('action', None)
-        if action:
-            if 'config' == action:
-                return self.config_action(request)
-
-            elif 'uploadimage' == action:
-                pass
-            elif 'uploadscrawl' == action:
-                pass
-
-            elif 'uploadvideo' == action:
-                pass
-
-            elif 'uploadfile' == action:
-                pass
-
-            elif 'listimage' == action:
-                pass
-
-            elif 'listfile' == action:
-                pass
-
-            elif 'catchimage' == action:
-                pass
-            else:
-                return None
-
-        else:
-            return None
+    def get_action(self, request):
+        action = request.GET.get('action', '')
+        action_method = getattr(self, action + '_action')
+        if action_method:
+            return action_method(request)
+        return None
 
     def config_action(self, request):
         return get_config()
 
     def uploadimage_action(self, request):
-        print request
-        return self
+        config = self.config_action(request)
+
+        uploadimage_config = {'pathFormat': config.get('imagePathFormat', ''),
+                              'maxSize': config.get('imageMaxSize', ''),
+                              'allowFiles': config.get('imageAllowFiles', ''),
+                              'fieldName': config.get('imageFieldName', '')
+                              }
+
+        return uploadimage_config
+
+    def uploadscrawl_action(self, request):
+        config = self.config_action(request)
+
+        uploadscrawl_config = {'pathFormat': config.get('scrawlPathFormat', ''),
+                               'maxSize': config.get('scrawlMaxSize', ''),
+                               'allowFiles': config.get('scrawlAllowFiles', ''),
+                               'oriName': config.get('scrawl.png', ''),
+                               'fieldName': config.get('scrawlFieldName', ''),
+                               'base64': 'base64'
+                               }
+
+        return uploadscrawl_config
+
+    def uploadvideo_action(self, request):
+        config = self.config_action(request)
+
+        uploadvideo_config = {'pathFormat': config.get('videoPathFormat', ''),
+                              'maxSize': config.get('videoMaxSize', ''),
+                              'allowFiles': config.get('videoAllowFiles', ''),
+                              'fieldName': config.get('videoFieldName', ''),
+                              }
+
+        return uploadvideo_config
+
+    def uploadfile_action(self, request):
+        config = self.config_action(request)
+
+        uploadfile_config = {'pathFormat': config.get('filePathFormat', ''),
+                             'maxSize': config.get('fileMaxSize', ''),
+                             'allowFiles': config.get('fileAllowFiles', ''),
+                             'fieldName': config.get('fileFieldName', '')
+                             }
+
+        return uploadfile_config
 
 controller_view = ControllerView.as_view()
