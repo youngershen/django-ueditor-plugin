@@ -24,7 +24,7 @@ def upload_file(request, config):
 
     upfile = request.FILES.get(fname)
     print dir(upfile)
-    # sie
+    # size
     if upfile.size > size:
         return dict(name='size is too big')
 
@@ -46,6 +46,14 @@ def upload_file(request, config):
         for chunk in upfile.chunks():
             dest.write(chunk)
 
-    return dict(name=url)
+    ret = {'state': 'SUCCESS',
+           'url': url,
+           'title': 'title',
+           'original': 'original',
+           'type': ext,
+           'size': size
+           }
+
+    return dict(ret)
 
 
