@@ -90,12 +90,12 @@ class ControllerView(JsonView):
         uploadscrawl_config = {'pathFormat': config.get('scrawlPathFormat', ''),
                                'maxSize': config.get('scrawlMaxSize', ''),
                                'allowFiles': config.get('scrawlAllowFiles', ''),
-                               'oriName': config.get('scrawl.png', ''),
+                               'oriName': config.get('scrawOriName', 'scrawl.png'),
                                'fieldName': config.get('scrawlFieldName', ''),
                                'base64': 'base64'
                                }
 
-        return upload_file(request, uploadscrawl_config)
+        return upload_file(request, uploadscrawl_config, base64='base64')
 
     def uploadvideo_action(self, request):
         config = self.config_action()
