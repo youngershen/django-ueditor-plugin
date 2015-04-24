@@ -80,8 +80,6 @@ def save_base64(upfile, path, name, size, allows):
         state = get_error_message('ERROR_SIZE_EXCEED')
 
     ext = '.' + name.split('.')[-1]
-    print ext
-    print allows
     if ext not in allows:
         state = get_error_message('ERROR_TYPE_NOT_ALLOWED')
 
