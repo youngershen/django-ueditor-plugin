@@ -46,21 +46,11 @@ class ControllerView(JsonView):
         super(ControllerView, self).__init__(*args, **kwargs)
 
     def get(self, request, *args, **kwarg):
-        callback = request.GET.get('callback', None)
-        action = request.GET.get('action', None)
-
-        # if 'config' == action:
-        #     return HttpResponse(json.dumps(self.config))
         action_data = self.get_action(request)
         if action_data:
             return self.render_to_response(action_data)
         else:
             raise Http404
-
-        if callback:
-            return HttpResponse(callback + '(' + json.dumps(self.config) + ')')
-        else:
-            return HttpResponse(json.dumps(dict(state=u"callback参数不合法")))
 
     def get_context_data(self):
         return self.config
@@ -73,7 +63,6 @@ class ControllerView(JsonView):
             raise Http404
 
     def config_action(self, request):
-        print self.config
         return self.config
 
     def get_action(self, request):
