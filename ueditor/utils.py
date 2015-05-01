@@ -9,6 +9,7 @@ import base64 as base64tool
 from django.conf import settings
 from .config import CONFIG
 from .config import ERRORS
+from .models import UeditorFile
 
 
 def get_config():
@@ -61,6 +62,11 @@ def upload_file(request, config, base64=None):
                 dest.write(chunk)
             except IOError:
                 state = get_error_message('ERROR_DIR_NOT_WRITEABLE')
+                break
+    if state:
+        UeditorFile.objects.create(name=uuid_str+ext, type=ext, url=url, status=UeditorFile.UPLOAD_FAILED)
+    else:
+        UeditorFile.objects.create(name=uuid_str+ext, type=ext, url=url, status=UeditorFile.UPLOAD_SUCCEED)
 
     ret = {'state': state if state else 'SUCCESS',
            'url': url,
