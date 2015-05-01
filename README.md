@@ -1,3 +1,3 @@
 #django-ueditor-plugin
 
-    a backend plugin for ueditor.
+    a ueditor backend plugin for django apps.
