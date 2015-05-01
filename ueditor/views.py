@@ -9,6 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
 from .utils import get_config
 from .utils import upload_file
+from .models import UeditorFile
 # Create your views here.
 
 
@@ -40,21 +41,29 @@ class JsonView(View, JsonResponseMixin):
 
 class ControllerView(JsonView):
 
+    def __init__(self, *args, **kwargs):
+        self.config = get_config()
+        super(ControllerView, self).__init__(*args, **kwargs)
+
     def get(self, request, *args, **kwarg):
         callback = request.GET.get('callback', None)
         action = request.GET.get('action', None)
-        config = get_config()
 
-        if 'config' == action:
-            return HttpResponse(json.dumps(config))
+        # if 'config' == action:
+        #     return HttpResponse(json.dumps(self.config))
+        action_data = self.get_action(request)
+        if action_data:
+            return self.render_to_response(action_data)
+        else:
+            raise Http404
 
         if callback:
-            return HttpResponse(callback + '(' + json.dumps(config) + ')')
+            return HttpResponse(callback + '(' + json.dumps(self.config) + ')')
         else:
             return HttpResponse(json.dumps(dict(state=u"callback参数不合法")))
 
     def get_context_data(self):
-        return self.config_action()
+        return self.config
 
     def post(self, request, *args, **kwargs):
         action_data = self.get_action(request, *args, **kwargs)
@@ -63,6 +72,10 @@ class ControllerView(JsonView):
         else:
             raise Http404
 
+    def config_action(self, request):
+        print self.config
+        return self.config
+
     def get_action(self, request):
         action = request.GET.get('action', '')
         action_method = getattr(self, action + '_action')
@@ -70,11 +83,64 @@ class ControllerView(JsonView):
             return action_method(request)
         return None
 
-    def config_action(self):
-        return get_config()
+    def listfile_action(self, request):
+        allow_file_types = self.config.get('fileManagerAllowFiles')
+        default_size = self.config.get('fileManagerListSize')
+        size = request.GET.get('size', '')
+        start = request.GET.get('start', 0)
+        try:
+            size = int(size)
+        except (ValueError, TypeError):
+            size = default_size
+
+        end = int(start) + size
+        files = UeditorFile.objects.filter(type__in=allow_file_types).values_list('url', flat=True)
+        import random
+        files_list = map(lambda x: {'url': x, 'mtime': random.random()}, files[start: end])
+
+        if files.exists():
+            return {'state': 'SUCCESS',
+                    'list': files_list,
+                    'start': start,
+                    'total': files.count()
+                    }
+        else:
+            return {'state': 'no match files',
+                    'list': [],
+                    'start': start,
+                    'total': 0
+                    }
+
+    def listimage_action(self, request):
+        allow_file_types = self.config.get('imageManagerAllowFiles')
+        default_size = self.config.get('imageManagerListSize')
+        size = request.GET.get('size', '')
+        start = request.GET.get('start', 0)
+        try:
+            size = int(size)
+        except (ValueError, TypeError):
+            size = default_size
+
+        end = int(start) + size
+        files = UeditorFile.objects.filter(type__in=allow_file_types).values_list('url', flat=True)
+        import random
+        files_list = map(lambda x: {'url': x, 'mtime': random.random()}, files[start: end])
+
+        if files.exists():
+            return {'state': 'SUCCESS',
+                    'list': files_list,
+                    'start': start,
+                    'total': files.count()
+                    }
+        else:
+            return {'state': 'no match files',
+                    'list': [],
+                    'start': start,
+                    'total': 0
+                    }
 
     def uploadimage_action(self, request):
-        config = self.config_action()
+        config = self.config
 
         uploadimage_config = {'pathFormat': config.get('imagePathFormat', ''),
                               'maxSize': config.get('imageMaxSize', ''),
@@ -85,7 +151,7 @@ class ControllerView(JsonView):
         return upload_file(request, uploadimage_config)
 
     def uploadscrawl_action(self, request):
-        config = self.config_action()
+        config = self.config
 
         uploadscrawl_config = {'pathFormat': config.get('scrawlPathFormat', ''),
                                'maxSize': config.get('scrawlMaxSize', ''),
@@ -98,7 +164,7 @@ class ControllerView(JsonView):
         return upload_file(request, uploadscrawl_config, base64='base64')
 
     def uploadvideo_action(self, request):
-        config = self.config_action()
+        config = self.config
 
         uploadvideo_config = {'pathFormat': config.get('videoPathFormat', ''),
                               'maxSize': config.get('videoMaxSize', ''),
@@ -109,7 +175,7 @@ class ControllerView(JsonView):
         return upload_file(request, uploadvideo_config)
 
     def uploadfile_action(self, request):
-        config = self.config_action()
+        config = self.config
 
         uploadfile_config = {'pathFormat': config.get('filePathFormat', ''),
                              'maxSize': config.get('fileMaxSize', ''),

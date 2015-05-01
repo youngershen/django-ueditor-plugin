@@ -67,6 +67,18 @@ CONFIG = {
     'imageManagerUrlPrefix': '',
     'imageManagerInsertAlign': 'none',
     'imageManagerAllowFiles': ['.png', '.jpg', '.jpeg', '.gif', '.bmp'],
+    # 列出制定目录下的文件
+    'fileManagerActionName': 'listfile',
+    'fileManagerListPath': '/ueditor/php/upload/file/',
+    'fileManagerUrlPrefix': '',
+    'fileManagerListSize': 20,
+    'fileManagerAllowFiles': [
+        '.png', '.jpg', '.jpeg', '.gif', '.bmp',
+        '.flv', '.swf', '.mkv', '.avi', '.rm', '.rmvb', '.mpeg', '.mpg',
+        '.ogg', '.ogv', '.mov', '.wmv', '.mp4', '.webm', '.mp3', '.wav', '.mid',
+        '.rar', '.zip', '.tar', '.gz', '.7z', '.bz2', '.cab', '.iso',
+        '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.pdf', '.txt', '.md', '.xml'
+    ]
 }
 
 # error message
