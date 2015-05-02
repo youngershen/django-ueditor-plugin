@@ -83,7 +83,7 @@ class ControllerView(JsonView):
             size = default_size
 
         end = int(start) + size
-        files = UeditorFile.objects.filter(type__in=allow_file_types).values_list('url', flat=True)
+        files = UeditorFile.objects.filter(type__in=allow_file_types, status=UeditorFile.UPLOAD_SUCCEED).values_list('url', flat=True)
         import random
         files_list = map(lambda x: {'url': x, 'mtime': random.random()}, files[start: end])
 
@@ -111,7 +111,7 @@ class ControllerView(JsonView):
             size = default_size
 
         end = int(start) + size
-        files = UeditorFile.objects.filter(type__in=allow_file_types).values_list('url', flat=True)
+        files = UeditorFile.objects.filter(type__in=allow_file_types, status=UeditorFile.UPLOAD_SUCCEED).values_list('url', flat=True)
         import random
         files_list = map(lambda x: {'url': x, 'mtime': random.random()}, files[start: end])
 
