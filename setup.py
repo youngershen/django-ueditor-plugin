@@ -5,7 +5,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.1'
+version = '0.11'
 
 setup(name='django-ueditor-plugin',
       version=version,
