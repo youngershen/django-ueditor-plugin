@@ -18,7 +18,14 @@ and urls.py
 
         urlpatterns += url(r'^ueditor/', include('ueditor.urls')),
 
-    
+
+then you should migrate the database
+
+    for south : python manage.py migrate ueditor
+    for django 1.7+ : python manage.py migrate ueditor
+    or python manage.py syncdb --all
+
+
 at last, you should use /ueditor/controller/ to your ueditor server url.
 
 
